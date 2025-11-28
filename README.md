@@ -1,6 +1,4 @@
-# CarWatch
-
-An app where citizens can report illegally parked vehicles so authorities can verify and take action. 
+# RobeUvt
 
 ## Technology Stack
 
@@ -43,8 +41,8 @@ In order to run this project please follow these steps:
 #### 4.1 Run Backend
 
 ```bash
-git clone "https://github.com/Balcus/CarWatch.git"
-cd CarWatch/AppHost
+git clone "https://github.com/Balcus/RobeUvt.git"
+cd RobeUvt/AppHost
 dotnet restore
 dotnet run
 ```
@@ -54,7 +52,7 @@ If there are no build errors, this should output the path used to log into the A
 #### 4.2 Run Frontend
 
 ```bash
-cd CarWatch/frontend
+cd RobeUvt/frontend
 npm install
 npm start
 ```
