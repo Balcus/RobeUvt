@@ -1,5 +1,5 @@
-
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using Api.DataAccess;
 using Api.DataAccess.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 public class BaseRepository<TEntity, TId>(DatabaseContext context) : IRepository<TEntity, TId>
     where TEntity : class, IEntityBase<TId>
 {
-    protected readonly DatabaseContext Context = context;
+    private readonly DatabaseContext Context = context;
 
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
     {
@@ -33,12 +33,13 @@ public class BaseRepository<TEntity, TId>(DatabaseContext context) : IRepository
         }
     }
 
-    public virtual async Task CreateAsync(TEntity entity)
+    public virtual async Task<TId> CreateAsync(TEntity entity)
     {
         try
         {
             Context.Set<TEntity>().Add(entity);
             await Context.SaveChangesAsync();
+            return entity.Id;
         }
         catch (DbUpdateException e)
         {
@@ -54,12 +55,13 @@ public class BaseRepository<TEntity, TId>(DatabaseContext context) : IRepository
         }
     }
 
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual async Task<TId> UpdateAsync(TEntity entity)
     {
         try
         {
             Context.Set<TEntity>().Update(entity);
             await Context.SaveChangesAsync();
+            return entity.Id;
         }
         catch (DbUpdateException e)
         {
@@ -89,6 +91,20 @@ public class BaseRepository<TEntity, TId>(DatabaseContext context) : IRepository
         catch (Exception e)
         {
             throw new Exception($"Failed to delete {typeof(TEntity).Name} with ID {id}: {e.Message}");
+        }
+    }
+    
+    public virtual async Task<IEnumerable<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        try
+        {
+            return await Context.Set<TEntity>()
+                .Where(predicate)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error while trying to retrieve entities by condition: {ex.Message}");
         }
     }
 }

@@ -1,0 +1,133 @@
+.profile-page {
+    background-color: var(--color-white);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-gray-dark);
+    margin-bottom: 2rem;
+}
+
+.profile-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-title h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+.profile-id {
+    margin: 0.25rem 0 0 0;
+    color: var(--color-gray-dark);
+    font-size: 0.9rem;
+}
+
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 1rem;
+}
+
+.about-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.payment-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin: 0;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.payment-table thead {
+    background-color: var(--color-gray-light);
+}
+
+.payment-table th {
+    text-align: center;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--color-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.payment-table td {
+    text-align: center;
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--color-gray);
+    color: var(--color-dark);
+}
+
+.payment-table tbody tr:hover {
+    background-color: var(--color-hover-white);
+}
+
+.status-completed {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: var(--color-pending-bg);
+    color: var(--color-pending-text);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-failed {
+    background-color: var(--color-failed-bg);
+    color: var(--color-failed-text);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.login-message {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-gray-dark);
+}

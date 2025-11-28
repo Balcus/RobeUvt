@@ -1,10 +1,13 @@
+using System.Linq.Expressions;
+
 namespace Api.DataAccess.Abstractions;
 
-public interface IRepository<TEntity, in TId> where TEntity : IEntityBase<TId>
+public interface IRepository<TEntity, TId> where TEntity : IEntityBase<TId>
 {
     Task<IEnumerable<TEntity>> GetAllAsync();
     Task<TEntity?> GetByIdAsync(TId id);
-    Task CreateAsync(TEntity entity);
-    Task UpdateAsync(TEntity entity);
+    Task<TId> CreateAsync(TEntity entity);
+    Task<TId> UpdateAsync(TEntity entity);
     Task DeleteAsync(TId id);
+    Task<IEnumerable<TEntity>> GetByConditionAsync(Expression<Func<TEntity, bool>> predicate);
 }
