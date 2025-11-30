@@ -1,0 +1,9 @@
+.table-head {
+  background-color: var(--color-blue-light);
+}
+
+.btn-add {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.3rem;
+}

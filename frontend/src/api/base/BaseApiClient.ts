@@ -4,13 +4,13 @@ export const defaultHeaders = {
     "Content-Type": "application/json",
 };
 
-export const ApiClient = axios.create({
+export const BaseApiClient = axios.create({
     baseURL: "http://localhost:5287/",
     headers: defaultHeaders,
     withCredentials: true,
 });
 
-ApiClient.interceptors.response.use(
+BaseApiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {

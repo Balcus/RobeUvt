@@ -4,7 +4,7 @@ namespace Gateway.Dto;
 
 public class LoginDto
 {
-    [Required]
-    [EmailAddress]
-    public string Mail { get; set; } = null!;
+    [Required] public string UserCode { get; set; } = null!;
+
+    [Required] [EmailAddress] public string Mail { get; set; } = null!;
 }

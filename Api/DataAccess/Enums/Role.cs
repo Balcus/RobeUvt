@@ -2,7 +2,7 @@ namespace Api.DataAccess.Enums;
 
 public enum Role
 {
-    Student,
-    Administrator,
-    Owner
+    Student = 0,
+    Administrator = 1,
+    Owner = 2
 }

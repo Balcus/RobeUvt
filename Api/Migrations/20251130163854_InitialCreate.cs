@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,7 +18,9 @@ namespace Api.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Mail = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false)
@@ -31,6 +34,12 @@ namespace Api.Migrations
                 name: "IX_Users_Mail",
                 table: "Users",
                 column: "Mail",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserCode",
+                table: "Users",
+                column: "UserCode",
                 unique: true);
         }
 

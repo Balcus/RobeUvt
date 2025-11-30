@@ -32,7 +32,8 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Sid, user!.Id),
+            new (ClaimTypes.NameIdentifier, user!.Id.ToString()),
+            new(ClaimTypes.Sid, user!.UserCode),
             new(ClaimTypes.Email, user.Mail),
             new(ClaimTypes.Name, user.Name),
             new(ClaimTypes.Role, user.Role)
@@ -60,8 +61,9 @@ public class AuthController : ControllerBase
         {
             return Unauthorized();
         }
-        
-        var id = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userCode = User.FindFirst(ClaimTypes.Sid)?.Value;
         var mail = User.FindFirst(ClaimTypes.Email)?.Value;
         var name = User.FindFirst(ClaimTypes.Name)?.Value;
         var role = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -69,6 +71,7 @@ public class AuthController : ControllerBase
         return Ok(new
         {
             Id = id,
+            UserCode = userCode,
             Mail = mail,
             Name = name,
             Role = role

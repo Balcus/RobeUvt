@@ -1,6 +1,6 @@
 namespace Api.BusinessLogic.Services.Abstraction;
 
-public interface ICrudService<TCreateDto, TReadDto, TId>
+public interface ICrudService<in TCreateDto, TReadDto, TId>
     where TCreateDto : Dto.Dto
     where TReadDto : Dto.Dto
 {

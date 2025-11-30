@@ -7,10 +7,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Api.DataAccess.Entities;
 
 [Index(nameof(Mail), IsUnique = true)]
-public class User : IEntityBase<string>
+[Index(nameof(UserCode), IsUnique = true)]
+public class User : IEntityBase<int>
 {
-    [Key]
-    public string Id { get; set; }
+    [Key] [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    [Required] [MaxLength(100)] public string UserCode { get; set; } = null!;
 
     [Required] [EmailAddress] [MaxLength(100)]
     public string Mail { get; set; } = null!;

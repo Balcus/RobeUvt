@@ -4,19 +4,18 @@ using Api.Controllers;
 using Api.DataAccess.Abstractions;
 using Api.DataAccess.Entities;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Api.BusinessLogic.Services.Implementation;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User, string> _repository;
+    private readonly IRepository<User, int> _repository;
     private readonly IMapper _mapper;
     private readonly ILogger<UserController> _logger;
     private readonly IMailService _mailService;
     
     public UserService(
-        IRepository<User, string> repository,
+        IRepository<User, int> repository,
         IMapper mapper,
         ILogger<UserController> logger,
         IMailService mailService)
@@ -32,43 +31,51 @@ public class UserService : IUserService
         return _mapper.Map<IEnumerable<UserGetDto>>(await _repository.GetAllAsync());
     }
 
-    public Task<UserGetDto> GetByIdAsync(string id)
+    public async Task<int> CreateAsync(UserCreateDto dto)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<string> CreateAsync(UserCreateDto dto)
-    {
-        var id = await _repository.CreateAsync(_mapper.Map<User>(dto));
-        await _mailService.SendMailAsync(dto.Mail, "User Created", "User has successfully been created");
+        var user = _mapper.Map<User>(dto);
+        var id = await _repository.CreateAsync(user);
+        await _mailService.SendMailAsync(
+            dto.Mail, 
+            "RobeUVT account created successfully", 
+            "UserCreated.cshtml", 
+            _mapper.Map<UserCreatedEmailModel>(user)
+        );
         return id;
     }
-
-    public Task<string> UpdateAsync(string id, UserCreateDto dto)
+    
+    public async Task<UserValidateResponseDto?> ValidateUserAsync(string userCode, string email)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<UserValidateResponseDto?> ValidateUserAsync(string email)
-    {
-        // Get user by email
-        var users = await _repository.GetByConditionAsync(u => u.Mail == email);
+        var users = await _repository.GetByConditionAsync(u => (u.Mail == email && u.UserCode == userCode));
         var user = users.FirstOrDefault();
         
         if (user == null)
             return null;
 
-        return new UserValidateResponseDto
-        {
-            Id = user.Id,
-            Mail = user.Mail,
-            Name = user.Name,
-            Role = user.Role.ToString()
-        };
+        return _mapper.Map<UserValidateResponseDto>(user);
     }
+    
+    public async Task<UserGetDto> GetByIdAsync(int id)
+    {
+        return _mapper.Map<UserGetDto>(await _repository.GetByIdAsync(id));
+    }
+    
+    public async Task<int> UpdateAsync(int id, UserCreateDto dto)
+    {
+        var user = await _repository.GetByIdAsync(id);
+        if (user == null)
+        {
+            throw new Exception("User does not exist");
+        }
+        user.Mail = dto.Mail;
+        user.Name = dto.Name;
+
+        return await _repository.UpdateAsync(user);
+    }
+
+    public Task DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
 }

@@ -24,8 +24,11 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.DataAccess.Entities.User", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Mail")
                         .IsRequired()
@@ -40,9 +43,17 @@ namespace Api.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
+                    b.Property<string>("UserCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Mail")
+                        .IsUnique();
+
+                    b.HasIndex("UserCode")
                         .IsUnique();
 
                     b.ToTable("Users");

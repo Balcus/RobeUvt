@@ -35,8 +35,9 @@ builder.Services.AddRouting(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddTransient<IMailService, MailService>();
-builder.Services.AddTransient<IRepository<User, string>, BaseRepository<User, string>>();
+builder.Services.AddTransient<IRepository<User, int>, BaseRepository<User, int>>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddSingleton<ITemplateRenderer, RazorTemplateRenderer>();
 
 var app = builder.Build();
 

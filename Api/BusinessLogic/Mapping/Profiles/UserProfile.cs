@@ -1,3 +1,4 @@
+using System.Text;
 using Api.BusinessLogic.Dto.UserDto;
 using Api.DataAccess.Entities;
 using AutoMapper;
@@ -9,13 +10,12 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<UserCreateDto, User>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => GenerateId(src.Mail)));
+            .ForMember(dest => dest.UserCode, opt => opt.MapFrom(src => GenerateCode(src.Mail)));
         
         CreateMap<User, UserGetDto>();
+        CreateMap<User, UserValidateResponseDto>();
+        CreateMap<User, UserCreatedEmailModel>();
     }
 
-    private static string GenerateId(string mail)
-    {
-        return $"{mail}_{Guid.NewGuid()}";
-    }
+    private static string GenerateCode(string mail) => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{mail}_{Guid.NewGuid()}"));
 }
