@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import "../../index.css";
@@ -12,11 +12,15 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { useAuth } from "../../api/context/AuthContext";
 
-export const Navbar: FC = () => {
+interface NavbarProps {
+  isExpanded: boolean;
+  setIsExpanded: (expanded: boolean) => void;
+}
+
+export const Navbar: FC<NavbarProps> = ({ isExpanded, setIsExpanded }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { hasRole } = useAuth();
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const allNavItems = [
     { name: "Home", path: "/", icon: <HomeOutlinedIcon /> },
