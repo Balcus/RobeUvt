@@ -35,7 +35,7 @@ public class AuthController : ControllerBase
             new (ClaimTypes.NameIdentifier, user!.Id.ToString()),
             new(ClaimTypes.Sid, user!.UserCode),
             new(ClaimTypes.Email, user.Mail),
-            new(ClaimTypes.Name, user.Name),
+            new(ClaimTypes.Name, user.FirstName),
             new(ClaimTypes.Role, user.Role)
         };
 

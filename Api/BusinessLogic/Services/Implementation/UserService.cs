@@ -48,11 +48,7 @@ public class UserService : IUserService
     {
         var users = await _repository.GetByConditionAsync(u => (u.Mail == email && u.UserCode == userCode));
         var user = users.FirstOrDefault();
-        
-        if (user == null)
-            return null;
-
-        return _mapper.Map<UserValidateResponseDto>(user);
+        return user == null ? null : _mapper.Map<UserValidateResponseDto>(user);
     }
     
     public async Task<UserGetDto> GetByIdAsync(int id)
@@ -67,9 +63,7 @@ public class UserService : IUserService
         {
             throw new Exception("User does not exist");
         }
-        user.Mail = dto.Mail;
-        user.Name = dto.Name;
-
+        _mapper.Map(dto, user);
         return await _repository.UpdateAsync(user);
     }
 
