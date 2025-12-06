@@ -18,7 +18,8 @@ public class UserService : IUserService
         IRepository<User, int> repository,
         IMapper mapper,
         ILogger<UserController> logger,
-        IMailService mailService)
+        IMailService mailService
+        )
     {
         _repository = repository;
         _mapper = mapper;
@@ -31,9 +32,11 @@ public class UserService : IUserService
         return _mapper.Map<IEnumerable<UserGetDto>>(await _repository.GetAllAsync());
     }
 
-    public async Task<int> CreateAsync(UserCreateDto dto)
+    public async Task<int> AdminCreateAsync(UserCreateDto dto)
     {
         var user = _mapper.Map<User>(dto);
+        user.PasswordHash = "changeme";
+        
         var id = await _repository.CreateAsync(user);
         await _mailService.SendMailAsync(
             dto.Mail, 

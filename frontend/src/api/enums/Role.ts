@@ -3,3 +3,5 @@ export const Role = {
   Administrator: 1,
   Owner: 2,
 } as const;
+
+export type Role = (typeof Role)[keyof typeof Role];

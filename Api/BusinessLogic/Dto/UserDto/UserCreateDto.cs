@@ -2,7 +2,7 @@ using Api.DataAccess.Enums;
 
 namespace Api.BusinessLogic.Dto.UserDto;
 
-public record UserCreateDto : Dto
+public record UserCreateDto : IDto
 {
     public string Mail { get; init; } = null!;
     public string? Phone { get; init; }

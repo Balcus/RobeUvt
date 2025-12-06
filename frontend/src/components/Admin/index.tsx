@@ -18,67 +18,69 @@ import {
   Button,
 } from "@mui/material";
 import { Edit, Save, Cancel } from "@mui/icons-material";
-import { Role } from "../../api/enums/Role";
-import type { UserModel } from "../../api/models/User/UserModel";
-import { UserApiClient } from "../../api/clients/UserApiClient";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import type { UserModel } from "../../api/models/User/UserModel";
 import type { UserCreateModel } from "../../api/models/User/UserCreateModel";
+import { UserApiClient } from "../../api/clients/UserApiClient";
 import "./Admin.css";
 import "../../index.css";
 
-const getRoleName = (roleValue: number): string => {
-  switch (roleValue) {
-    case Role.Student:
-      return "Student";
-    case Role.Administrator:
-      return "Administrator";
-    case Role.Owner:
-      return "Owner";
-    default:
-      return "Unknown";
-  }
+const defaultUserCreateModel: UserCreateModel = {
+  mail: "",
+  phone: null,
+  firstName: "",
+  lastName: "",
+  gender: null,
+  gownSize: null,
+  capSize: null,
+  address: null,
+  country: null,
+  city: null,
+  studyCycle: null,
+  facultyId: 1,
+  studyProgram: null,
+  promotion: null,
+  doubleSpecialization: false,
+  doubleCycle: false,
+  doubleFaculty: false,
+  doubleStudyProgram: false,
+  specialNeeds: false,
+  mobilityAccess: false,
+  extraAssistance: false,
+  otherNeeds: null,
 };
 
-interface Column {
-  id: "name" | "mail" | "role";
-  label: string;
-  minWidth?: number;
-  align?: "right";
-}
+const columns = [
+  { id: "mail", label: "Email" },
+  { id: "phone", label: "Phone" },
+  { id: "firstName", label: "First Name" },
+  { id: "lastName", label: "Last Name" },
+  { id: "gownSize", label: "Gown Size" },
+  { id: "capSize", label: "Cap Size" },
+  { id: "address", label: "Address" },
+  { id: "country", label: "Country" },
+  { id: "city", label: "City" },
+  { id: "studyCycle", label: "Study Cycle" },
+  { id: "studyProgram", label: "Study Program" },
+  { id: "promotion", label: "Promotion" },
+] as const;
 
 export const Admin: FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<UserModel[]>([]);
-  const [editingUser, setEditingUser] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<number | null>(null);
   const [editedData, setEditedData] = useState<UserModel | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState<UserCreateModel>({
-    name: "",
-    mail: "",
+    ...defaultUserCreateModel,
   });
-
-  const columns: readonly Column[] = [
-    {
-      id: "name",
-      label: "Name",
-      minWidth: 20,
-    },
-    {
-      id: "mail",
-      label: "Email Address",
-      minWidth: 25,
-    },
-    {
-      id: "role",
-      label: "Role",
-      minWidth: 20,
-    },
-  ];
 
   const fetchUsers = async () => {
     setIsLoading(true);
-    const result: UserModel[] = await UserApiClient.getAllAsync();
-    setUsers(result);
+    try {
+      const result = await UserApiClient.getAllAsync();
+      setUsers(result);
+    } catch (error) {}
     setIsLoading(false);
   };
 
@@ -87,7 +89,7 @@ export const Admin: FC = () => {
   }, []);
 
   const handleEdit = (user: UserModel) => {
-    setEditingUser(user.mail);
+    setEditingUser(user.id);
     setEditedData({ ...user });
   };
 
@@ -98,19 +100,16 @@ export const Admin: FC = () => {
 
   const handleSave = async () => {
     if (!editedData) return;
-
     setIsLoading(true);
     await UserApiClient.updateAsync(editedData);
-    setUsers(users.map((u) => (u.mail === editedData.mail ? editedData : u)));
+    setUsers(users.map((u) => (u.id === editedData.id ? editedData : u)));
     setEditingUser(null);
     setEditedData(null);
     setIsLoading(false);
   };
 
-  const handleChange = (field: keyof UserModel, value: string | number) => {
-    if (editedData) {
-      setEditedData({ ...editedData, [field]: value });
-    }
+  const handleChange = (field: keyof UserModel, value: any) => {
+    if (editedData) setEditedData({ ...editedData, [field]: value });
   };
 
   const handleOpenDialog = () => {
@@ -119,28 +118,24 @@ export const Admin: FC = () => {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    setNewUser({
-      name: "",
-      mail: "",
-    });
+    setNewUser({ ...defaultUserCreateModel });
   };
 
   const handleCreateUser = async () => {
-    if (!newUser.name || !newUser.mail) {
-      return;
-    }
-
+    if (!newUser.firstName || !newUser.lastName || !newUser.mail) return;
     setIsLoading(true);
-    await UserApiClient.createAsync(newUser);
-    await fetchUsers();
-    handleCloseDialog();
-    setIsLoading(false);
+    try {
+      await UserApiClient.createAsync(newUser);
+      await fetchUsers();
+      handleCloseDialog();
+    } catch (err: any) {
+      // TODO: add an error handling for all the fe!
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleNewUserChange = (
-    field: keyof UserModel,
-    value: string | number
-  ) => {
+  const handleNewUserChange = (field: keyof UserCreateModel, value: any) => {
     setNewUser({ ...newUser, [field]: value });
   };
 
@@ -165,7 +160,7 @@ export const Admin: FC = () => {
         <Box
           sx={{
             display: "flex",
-            alignItems: "felx-start",
+            alignItems: "flex-start",
             marginBottom: "1.2rem",
           }}
         >
@@ -177,6 +172,7 @@ export const Admin: FC = () => {
             Add User
           </Button>
         </Box>
+
         <TableContainer>
           <Table>
             <TableHead className="table-head">
@@ -184,50 +180,42 @@ export const Admin: FC = () => {
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth + "%", color: "white" }}
+                    style={{ color: "white", minWidth: "120px" }}
                   >
                     {column.label}
                   </TableCell>
                 ))}
-                <TableCell style={{ color: "white", minWidth: "10%" }}>
-                  Actions
-                </TableCell>
+                <TableCell style={{ color: "white" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {users.map((user) => {
-                const isEditing = editingUser === user.mail;
+                const isEditing = editingUser === user.id;
                 const displayUser = isEditing && editedData ? editedData : user;
 
                 return (
-                  <TableRow hover key={user.mail}>
-                    <TableCell>
-                      {isEditing ? (
-                        <TextField
-                          value={displayUser.name}
-                          onChange={(e) => handleChange("name", e.target.value)}
-                          size="small"
-                          fullWidth
-                        />
-                      ) : (
-                        displayUser.name
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isEditing ? (
-                        <TextField
-                          value={displayUser.mail}
-                          onChange={(e) => handleChange("mail", e.target.value)}
-                          size="small"
-                          fullWidth
-                          type="email"
-                        />
-                      ) : (
-                        displayUser.mail
-                      )}
-                    </TableCell>
-                    <TableCell>{getRoleName(displayUser.role)}</TableCell>
+                  <TableRow hover key={user.id}>
+                    {columns.map((col) => (
+                      <TableCell key={col.id}>
+                        {isEditing ? (
+                          <TextField
+                            value={displayUser[col.id] ?? ""}
+                            onChange={(e) =>
+                              handleChange(
+                                col.id as keyof UserModel,
+                                e.target.value
+                              )
+                            }
+                            size="small"
+                            fullWidth
+                          />
+                        ) : (
+                          (displayUser as any)[col.id]?.toString() ?? ""
+                        )}
+                      </TableCell>
+                    ))}
+
                     <TableCell>
                       {isEditing ? (
                         <>
@@ -235,16 +223,10 @@ export const Admin: FC = () => {
                             onClick={handleSave}
                             color="primary"
                             size="small"
-                            disabled={isLoading}
                           >
                             <Save />
                           </IconButton>
-                          <IconButton
-                            onClick={handleCancel}
-                            color="default"
-                            size="small"
-                            disabled={isLoading}
-                          >
+                          <IconButton onClick={handleCancel} size="small">
                             <Cancel />
                           </IconButton>
                         </>
@@ -276,9 +258,16 @@ export const Admin: FC = () => {
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <TextField
-              label="Name"
-              value={newUser.name}
-              onChange={(e) => handleNewUserChange("name", e.target.value)}
+              label="First Name"
+              value={newUser.firstName}
+              onChange={(e) => handleNewUserChange("firstName", e.target.value)}
+              fullWidth
+              required
+            />
+            <TextField
+              label="Last Name"
+              value={newUser.lastName}
+              onChange={(e) => handleNewUserChange("lastName", e.target.value)}
               fullWidth
               required
             />
@@ -299,7 +288,12 @@ export const Admin: FC = () => {
           <Button
             onClick={handleCreateUser}
             variant="contained"
-            disabled={isLoading || !newUser.name || !newUser.mail}
+            disabled={
+              isLoading ||
+              !newUser.firstName ||
+              !newUser.lastName ||
+              !newUser.mail
+            }
           >
             Create
           </Button>

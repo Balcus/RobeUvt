@@ -37,9 +37,9 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Administrator,Owner")]
-    public async Task<ActionResult<int>> CreateAsync([FromBody] UserCreateDto dto)
+    public async Task<ActionResult<int>> AdminCreateAsync([FromBody] UserCreateDto dto)
     {
-        return Ok(await _userService.CreateAsync(dto));
+        return Ok(await _userService.AdminCreateAsync(dto));
     }
     
     [HttpPost("validate")]

@@ -2,7 +2,7 @@ using Api.DataAccess.Enums;
 
 namespace Api.BusinessLogic.Dto.UserDto;
 
-public record UserGetDto : Dto
+public record UserGetDto : IDto
 {
     public int Id { get; init; }
     public string UserCode { get; init; } = null!;

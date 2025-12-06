@@ -1,6 +1,6 @@
 namespace Api.BusinessLogic.Dto;
 
-public interface Dto
+public interface IDto
 {
     
 }

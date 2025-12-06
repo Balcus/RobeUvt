@@ -18,10 +18,9 @@ export const UserApiClient = {
     ).then((response) => response.data);
   },
 
-  async createAsync(user: UserCreateModel): Promise<UserCreateModel> {
-    return BaseApiClient.post<UserCreateModel>(
-      UserApiClient.urlPath,
-      user
-    ).then((response) => response.data);
+  async createAsync(user: UserCreateModel): Promise<number> {
+    return BaseApiClient.post<number>(UserApiClient.urlPath, user).then(
+      (response) => response.data
+    );
   },
 };
